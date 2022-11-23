@@ -18,8 +18,12 @@ export class KeywordsService {
   ) {}
 
   async addKeyword(keywordDto: NewKeywordDto): Promise<ResponseKeywordDto> {
+    // validate language
     this.validateLanguage(keywordDto.language);
+
     const keyword = await this.findKeyword(keywordDto.keyword);
+
+    // if keyword already exists, throw error
     if (keyword) {
       throw new HttpException('Keyword already exists', HttpStatus.BAD_REQUEST);
     }
@@ -29,6 +33,7 @@ export class KeywordsService {
   async getPendingForApproval(
     filter: Language | null,
   ): Promise<ResponseKeywordDto[]> {
+    // filter by language if provided
     if (filter) {
       this.validateLanguage(filter);
       return await this.model
@@ -46,6 +51,7 @@ export class KeywordsService {
     return await this.model.findOne({ keyword }).exec();
   }
 
+  // Language validator
   private validateLanguage(lang: Language): boolean {
     const isValidLang = Object.values(Language).includes(lang);
     if (!isValidLang) {
