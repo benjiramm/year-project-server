@@ -12,6 +12,14 @@ async function bootstrap() {
     .setDescription('The NestJS Dictionary API description')
     .setVersion('1.0.0')
     .addTag('Year Project')
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+      name: 'JWT',
+      description: 'Enter JWT token',
+      in: 'header',
+    })
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

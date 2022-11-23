@@ -4,6 +4,7 @@ import { User, UserDocument } from '@/users/schemas/user.schema';
 import { Model } from 'mongoose';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { UserDto } from '@/users/dto/user.dto';
+import { ResponseUserDto } from '@/users/dto/response-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -17,5 +18,9 @@ export class UsersService {
 
   async getUserByUserName(username: string): Promise<UserDto> {
     return await this.model.findOne({ username }).exec();
+  }
+
+  async getUserById(id: string): Promise<ResponseUserDto> {
+    return await this.model.findById(id).select('-password').exec();
   }
 }

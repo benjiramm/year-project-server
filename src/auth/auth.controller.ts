@@ -1,18 +1,52 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from '@/auth/auth.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { TokenDto } from '@/auth/dto/auth.dto';
 import { CreateSuperUserDto } from '@/users/dto/create-super-user.dto';
+import { CreateUserDto } from '@/users/dto/create-user.dto';
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
+import { LoginUserDto } from '@/users/dto/login-user.dto';
+import { ResponseUserDto } from '@/users/dto/response-user.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('/create-super-user')
-  @ApiOperation({ summary: 'User registration' })
+  @Post('create-super-user')
+  @ApiOperation({ summary: 'Register Super-User' })
   @ApiResponse({ status: 200, type: TokenDto })
   registration(@Body() userDto: CreateSuperUserDto) {
     return this.authService.createSuperUser(userDto);
+  }
+
+  @Post('add-user')
+  @ApiOperation({ summary: 'Add User With Super-User' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiResponse({ status: 200, type: ResponseUserDto })
+  addUser(@Body() userDto: CreateUserDto) {
+    return this.authService.addUser(userDto);
+  }
+
+  @Post('login')
+  @ApiOperation({ summary: 'User login' })
+  @ApiResponse({ status: 200, type: TokenDto })
+  login(@Body() userDto: LoginUserDto) {
+    return this.authService.login(userDto);
+  }
+
+  @Get('get-user')
+  @ApiOperation({ summary: 'Get User Profile' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: 200, type: ResponseUserDto })
+  @UseGuards(JwtAuthGuard)
+  getUser(@Req() req) {
+    return this.authService.getUser(req.user.id);
   }
 }
