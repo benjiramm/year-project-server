@@ -23,10 +23,10 @@ export class NewKeywordDto {
   isAuthorized: boolean;
 
   @ApiProperty({ example: 100, description: 'Likes' })
-  likes: number;
+  likes: Array<string>;
 
   @ApiProperty({ example: 0, description: 'Dislikes' })
-  dislikes: number;
+  dislikes: Array<string>;
 }
 
 export class ResponseKeywordDto extends NewKeywordDto {

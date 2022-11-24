@@ -10,6 +10,7 @@ import {
   KeywordDocument,
   Language,
 } from '@/keywords/schemas/keyword.schema';
+import { Action } from '@/keywords/types';
 
 @Injectable()
 export class KeywordsService {
@@ -47,6 +48,28 @@ export class KeywordsService {
     return await this.model.find({ keyword: { $regex: keyword } }).exec();
   }
 
+  async like(id: string, userId: string): Promise<ResponseKeywordDto> {
+    const isRated = await this.checkIfUserRated(id, userId, Action.LIKE);
+    const keyword = await this.model.findById(id);
+    if (isRated) {
+      return keyword;
+    }
+    keyword.likes.push(userId);
+    keyword.save();
+    return keyword;
+  }
+
+  async dislike(id: string, userId: string): Promise<ResponseKeywordDto> {
+    const isRated = await this.checkIfUserRated(id, userId, Action.DISLIKE);
+    const keyword = await this.model.findById(id);
+    if (isRated) {
+      return keyword;
+    }
+    keyword.dislikes.push(userId);
+    keyword.save();
+    return keyword;
+  }
+
   private async findKeyword(keyword: string): Promise<Keyword> {
     return await this.model.findOne({ keyword }).exec();
   }
@@ -58,5 +81,48 @@ export class KeywordsService {
       throw new HttpException('Invalid lang', HttpStatus.BAD_REQUEST);
     }
     return isValidLang;
+  }
+
+  private async checkIfUserRated(
+    id: string,
+    userId: string,
+    action,
+  ): Promise<boolean> {
+    let keyword = await this.model.findById(id);
+    if (!keyword) {
+      throw new HttpException('Keyword not found', HttpStatus.NOT_FOUND);
+    }
+
+    keyword = await this.model.findOne({
+      _id: id,
+      $or: [{ likes: userId }, { dislikes: userId }],
+    });
+
+    if (
+      keyword &&
+      ((keyword.likes.includes(userId) && action === Action.DISLIKE) ||
+        (keyword.dislikes.includes(userId) && action === Action.LIKE))
+    ) {
+      return true;
+    }
+
+    if (keyword) {
+      if (keyword.likes.includes(userId) && action === Action.LIKE) {
+        await this.model.updateOne({
+          _id: id,
+          $pull: { likes: userId },
+        });
+        return true;
+      }
+
+      if (keyword.dislikes.includes(userId) && action === Action.DISLIKE) {
+        await this.model.updateOne({
+          _id: id,
+          $pull: { dislikes: userId },
+        });
+        return true;
+      }
+    }
+    return false;
   }
 }

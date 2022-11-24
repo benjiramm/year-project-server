@@ -22,11 +22,11 @@ export class Keyword {
   @Prop({ default: false })
   isAuthorized: boolean;
 
-  @Prop({ default: 0 })
-  likes: number;
+  @Prop({ default: [] })
+  likes: [string];
 
-  @Prop({ default: 0 })
-  dislikes: number;
+  @Prop({ default: [] })
+  dislikes: [string];
 }
 
 export const KeywordSchema = SchemaFactory.createForClass(Keyword);

@@ -1,11 +1,23 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { KeywordsService } from '@/keywords/keywords.service';
 import {
   NewKeywordDto,
   ResponseKeywordDto,
 } from '@/keywords/dto/new-keyword.dto';
-import { SearchKeywordDto } from '@/keywords/dto/get-keyword.dto';
+import {
+  RankKeywordDto,
+  SearchKeywordDto,
+} from '@/keywords/dto/get-keyword.dto';
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
 
 @ApiTags('Keywords')
 @Controller('keywords')
@@ -32,5 +44,21 @@ export class KeywordsController {
   @ApiResponse({ status: 200, type: ResponseKeywordDto })
   getKeyword(@Body() searchDto: SearchKeywordDto) {
     return this.keywordsService.getKeyword(searchDto.keyword);
+  }
+
+  @Post('like')
+  @ApiOperation({ summary: 'Like meaning' })
+  @ApiResponse({ status: 200, type: ResponseKeywordDto })
+  @UseGuards(JwtAuthGuard)
+  like(@Req() req, @Body() rankDto: RankKeywordDto) {
+    return this.keywordsService.like(rankDto.id, req.user.id);
+  }
+
+  @Post('dislike')
+  @ApiOperation({ summary: 'Like meaning' })
+  @ApiResponse({ status: 200, type: ResponseKeywordDto })
+  @UseGuards(JwtAuthGuard)
+  dislike(@Req() req, @Body() rankDto: RankKeywordDto) {
+    return this.keywordsService.dislike(rankDto.id, req.user.id);
   }
 }

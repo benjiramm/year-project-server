@@ -7,3 +7,13 @@ export class SearchKeywordDto {
   @IsNotEmpty({ message: 'Cannot be empty' })
   readonly keyword: string;
 }
+
+export class RankKeywordDto {
+  @ApiProperty({
+    example: '637ebad3b800906da0090115',
+    description: 'Keyword ID',
+  })
+  @IsString({ message: 'Must be a string' })
+  @IsNotEmpty({ message: 'Cannot be empty' })
+  readonly id: string;
+}
