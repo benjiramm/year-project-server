@@ -7,7 +7,12 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { KeywordsService } from '@/keywords/keywords.service';
 import {
   NewKeywordDto,
@@ -49,6 +54,7 @@ export class KeywordsController {
   @Post('like')
   @ApiOperation({ summary: 'Like meaning' })
   @ApiResponse({ status: 200, type: ResponseKeywordDto })
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   like(@Req() req, @Body() rankDto: RankKeywordDto) {
     return this.keywordsService.like(rankDto.id, req.user.id);
@@ -57,6 +63,7 @@ export class KeywordsController {
   @Post('dislike')
   @ApiOperation({ summary: 'Like meaning' })
   @ApiResponse({ status: 200, type: ResponseKeywordDto })
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   dislike(@Req() req, @Body() rankDto: RankKeywordDto) {
     return this.keywordsService.dislike(rankDto.id, req.user.id);
