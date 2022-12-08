@@ -9,7 +9,7 @@ import {
 import { TokenDto } from '@/auth/dto/auth.dto';
 import { CreateSuperUserDto } from '@/users/dto/create-super-user.dto';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
+import { JwtAuthGuard, SuperUserGuard } from '@/auth/jwt-auth.guard';
 import { LoginUserDto } from '@/users/dto/login-user.dto';
 import { ResponseUserDto } from '@/users/dto/response-user.dto';
 
@@ -29,6 +29,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Add User With Super-User' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @UseGuards(SuperUserGuard)
   @ApiResponse({ status: 200, type: ResponseUserDto })
   addUser(@Body() userDto: CreateUserDto) {
     return this.authService.addUser(userDto);
@@ -39,6 +40,13 @@ export class AuthController {
   @ApiResponse({ status: 200, type: TokenDto })
   login(@Body() userDto: LoginUserDto) {
     return this.authService.login(userDto);
+  }
+
+  @Post('register')
+  @ApiOperation({ summary: 'Register User' })
+  @ApiResponse({ status: 200, type: TokenDto })
+  register(@Body() userDto: CreateUserDto) {
+    return this.authService.registration(userDto);
   }
 
   @Get('get-user')

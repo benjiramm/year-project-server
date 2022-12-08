@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString, Length } from 'class-validator';
+import { IsString, Length } from 'class-validator';
 import { Roles } from '@/users/schemas/user.schema';
 
 export class CreateUserDto {
@@ -17,6 +17,6 @@ export class CreateUserDto {
     example: '0 || 1 || 2',
     description: '0=USER | 1=ADMIN | 2=SUPERUSER',
   })
-  @IsNumber({}, { message: 'Must Be role enum: 0 || 1 || 2' })
+  // @IsNumber({}, { message: 'Must Be role enum: 0 || 1 || 2' })
   readonly role: Roles;
 }

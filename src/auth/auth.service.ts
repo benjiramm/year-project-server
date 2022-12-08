@@ -58,6 +58,37 @@ export class AuthService {
     return this.generateToken(user);
   }
 
+  async registration(userDto: CreateUserDto): Promise<TokenDto> {
+    // Check if user with that username already exists
+    const candidate = await this.usersService.getUserByUserName(
+      userDto.username,
+    );
+
+    // If user exists, throw an error
+    if (candidate) {
+      throw new HttpException(
+        'User with that username already exists',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // Hash password
+    const hashPassword = await bcrypt.hash(userDto.password, 10);
+
+    // Create new user DTO
+    const newUserDto: CreateUserDto = {
+      username: userDto.username,
+      password: hashPassword,
+      role: Roles.USER,
+    };
+
+    // Call service to create new user
+    const createdUser = await this.usersService.createUser(newUserDto);
+
+    // Generate token
+    return this.generateToken(createdUser);
+  }
+
   async addUser(userDto: CreateUserDto): Promise<ResponseUserDto> {
     // Check if user with that username already exists
     const candidate = await this.usersService.getUserByUserName(
