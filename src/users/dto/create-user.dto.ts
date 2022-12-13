@@ -14,7 +14,7 @@ export class CreateUserDto {
   readonly password: string;
 
   @ApiProperty({
-    example: '0 || 1 || 2',
+    example: '0',
     description: '0=USER | 1=ADMIN | 2=SUPERUSER',
   })
   // @IsNumber({}, { message: 'Must Be role enum: 0 || 1 || 2' })

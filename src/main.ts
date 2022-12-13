@@ -8,7 +8,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
-    .setTitle('NestJS Dictionary')
+    .setTitle('Year Project API Docs')
     .setDescription('The NestJS Dictionary API description')
     .setVersion('1.0.0')
     .addTag('Year Project')
