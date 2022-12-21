@@ -72,7 +72,7 @@ export class KeywordsController {
     return this.keywordsService.dislike(rankDto.id, req.user.id);
   }
 
-  @Get('authorize-keyword/:id')
+  @Post('authorize-keyword/:id')
   @ApiOperation({ summary: 'Authorize keyword' })
   @ApiResponse({ status: 200, type: ResponseKeywordDto })
   @ApiBearerAuth()
