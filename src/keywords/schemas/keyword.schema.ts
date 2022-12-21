@@ -1,32 +1,98 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, ObjectId, SchemaTypes } from 'mongoose';
+import { ApiProperty } from '@nestjs/swagger';
 
 export type KeywordDocument = Keyword & Document;
 
 export enum Language {
   ENGLISH = 'en',
   HEBREW = 'he',
+  ARABIC = 'ar',
 }
 
+export const defaultKeywordValue: IKeyword = {
+  keyword: null,
+  short: null,
+  long: null,
+  isAuthorized: false,
+  likes: [],
+  dislikes: [],
+  // _id: null,
+};
+
 @Schema()
-export class Keyword {
-  @Prop({ required: true, unique: true })
+export class IKeyword {
+  @Prop({
+    type: String || null,
+    default: defaultKeywordValue.keyword,
+  })
   keyword: string;
 
-  @Prop({ required: true })
-  meaning: string;
+  @Prop({
+    type: String || null,
+    default: defaultKeywordValue.short,
+  })
+  short: string;
 
-  @Prop({ required: true })
-  language: Language;
+  @Prop({
+    type: String || null,
+    default: defaultKeywordValue.long,
+  })
+  long: string;
 
   @Prop({ default: false })
   isAuthorized: boolean;
 
-  @Prop({ default: [] })
-  likes: [string];
+  @Prop({ default: [], type: [String] })
+  likes: Array<string>;
 
-  @Prop({ default: [] })
-  dislikes: [string];
+  @Prop({ default: [], type: [String] })
+  dislikes: Array<string>;
+
+  @Prop({ type: SchemaTypes.ObjectId, auto: true })
+  _id?: ObjectId;
+}
+
+@Schema()
+export class Keyword {
+  @ApiProperty({
+    example: {
+      keyword: 'מדא',
+      short: 'קצר',
+      long: 'ארוך',
+      isAuthorized: false,
+      likes: [],
+      dislikes: [],
+    },
+  })
+  @Prop({ type: IKeyword, default: defaultKeywordValue })
+  he: IKeyword;
+
+  @ApiProperty({
+    example: {
+      keyword: 'mada',
+      short: 'short',
+      long: 'long',
+      isAuthorized: false,
+      likes: [],
+      dislikes: [],
+    },
+  })
+  @Prop({ type: IKeyword, default: defaultKeywordValue })
+  en: IKeyword;
+
+  @ApiProperty({
+    example: {
+      keyword: 'مدى',
+      short: 'قصير',
+      long: 'طويل',
+      isAuthorized: false,
+      likes: [],
+      dislikes: [],
+    },
+  })
+  @Prop({ type: IKeyword, default: defaultKeywordValue })
+  ar: IKeyword;
 }
 
 export const KeywordSchema = SchemaFactory.createForClass(Keyword);
