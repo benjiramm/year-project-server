@@ -28,7 +28,7 @@ export class JwtAuthGuard implements CanActivate {
       req.user = this.jwtService.verify(token);
       return true;
     } catch (e) {
-      throw new UnauthorizedException({ message: 'User not authorized' });
+      throw new UnauthorizedException(e.message);
     }
   }
 }
@@ -55,7 +55,34 @@ export class SuperUserGuard implements CanActivate {
       }
       throw new UnauthorizedException({ message: 'User not superuser' });
     } catch (e) {
-      throw new UnauthorizedException({ message: 'User not superuser' });
+      throw new UnauthorizedException(e.message);
+    }
+  }
+}
+
+@Injectable()
+export class AdminGuard implements CanActivate {
+  constructor(private jwtService: JwtService) {}
+
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    const req = context.switchToHttp().getRequest();
+    try {
+      const authHeader = req.headers.authorization;
+      const bearer = authHeader.split(' ')[0];
+      const token = authHeader.split(' ')[1];
+
+      if (bearer !== 'Bearer' || !token) {
+        throw new UnauthorizedException({ message: 'User not authorized' });
+      }
+      const user = this.jwtService.verify(token);
+      if (user.role === Roles.SUPERUSER || user.role === Roles.ADMIN) {
+        return true;
+      }
+      throw new UnauthorizedException({ message: 'User not admin' });
+    } catch (e) {
+      throw new UnauthorizedException(e.message);
     }
   }
 }

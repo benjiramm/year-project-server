@@ -70,6 +70,22 @@ export class KeywordsService {
     return keyword;
   }
 
+  async authorizeKeyword(id: string): Promise<ResponseKeywordDto> {
+    const keyword = await this.model.findById(id);
+    if (!keyword) {
+      throw new HttpException('Keyword not found', HttpStatus.NOT_FOUND);
+    }
+    if (keyword.isAuthorized) {
+      throw new HttpException(
+        'Keyword already authorized',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    keyword.isAuthorized = true;
+    keyword.save();
+    return keyword;
+  }
+
   private async findKeyword(keyword: string): Promise<Keyword> {
     return await this.model.findOne({ keyword }).exec();
   }

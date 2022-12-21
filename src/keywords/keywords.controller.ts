@@ -2,10 +2,13 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Query,
   Req,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -22,7 +25,7 @@ import {
   RankKeywordDto,
   SearchKeywordDto,
 } from '@/keywords/dto/get-keyword.dto';
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
+import { AdminGuard, JwtAuthGuard } from '@/auth/jwt-auth.guard';
 
 @ApiTags('Keywords')
 @Controller('keywords')
@@ -61,11 +64,20 @@ export class KeywordsController {
   }
 
   @Post('dislike')
-  @ApiOperation({ summary: 'Like meaning' })
+  @ApiOperation({ summary: 'Dislike meaning' })
   @ApiResponse({ status: 200, type: ResponseKeywordDto })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   dislike(@Req() req, @Body() rankDto: RankKeywordDto) {
     return this.keywordsService.dislike(rankDto.id, req.user.id);
+  }
+
+  @Get('authorize-keyword/:id')
+  @ApiOperation({ summary: 'Authorize keyword' })
+  @ApiResponse({ status: 200, type: ResponseKeywordDto })
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
+  authorizeKeyword(@Param('id') id: string) {
+    return this.keywordsService.authorizeKeyword(id);
   }
 }
