@@ -7,7 +7,7 @@ import {
 import * as _ from 'lodash';
 import {
   NewKeywordDto,
-  ResponseKeywordDto,
+  // ResponseKeywordDto,
 } from '@/keywords/dto/new-keyword.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -26,7 +26,7 @@ export class KeywordsService {
     @InjectModel(Keyword.name) private readonly model: Model<KeywordDocument>,
   ) {}
 
-  async addKeyword(keywordDto: NewKeywordDto): Promise<ResponseKeywordDto> {
+  async addKeyword(keywordDto: NewKeywordDto): Promise<Keyword> {
     // validate language
     // this.validateLanguage(keywordDto.language);
     const keyword = await this.findKeyword(keywordDto);
@@ -37,9 +37,7 @@ export class KeywordsService {
     return await new this.model(keywordDto).save();
   }
 
-  async getPendingForApproval(
-    filter: Language | null,
-  ): Promise<ResponseKeywordDto[]> {
+  async getPendingForApproval(filter: Language | null): Promise<Keyword[]> {
     // filter by language if provided
     if (filter) {
       this.validateLanguage(filter);
@@ -59,7 +57,7 @@ export class KeywordsService {
       .exec();
   }
 
-  async getKeyword(keyword: string): Promise<ResponseKeywordDto[]> {
+  async getKeyword(keyword: string): Promise<Keyword[]> {
     return await this.model
       .find({
         $or: [
@@ -71,10 +69,7 @@ export class KeywordsService {
       .exec();
   }
 
-  async like(
-    rankDto: RankKeywordDto,
-    userId: string,
-  ): Promise<ResponseKeywordDto> {
+  async like(rankDto: RankKeywordDto, userId: string): Promise<Keyword> {
     const keyword = await this.model.findById(rankDto.id).exec();
 
     if (!keyword) {
@@ -102,10 +97,7 @@ export class KeywordsService {
     return keyword;
   }
 
-  async dislike(
-    rankDto: RankKeywordDto,
-    userId: string,
-  ): Promise<ResponseKeywordDto> {
+  async dislike(rankDto: RankKeywordDto, userId: string): Promise<Keyword> {
     const keyword = await this.model.findById(rankDto.id).exec();
 
     if (!keyword) {
@@ -133,7 +125,7 @@ export class KeywordsService {
     return keyword;
   }
 
-  async authorizeKeyword(rankDto: RankKeywordDto): Promise<ResponseKeywordDto> {
+  async authorizeKeyword(rankDto: RankKeywordDto): Promise<Keyword> {
     const keyword = await this.model.findById(rankDto.id).exec();
     if (!keyword) {
       throw new HttpException('Keyword not found', HttpStatus.NOT_FOUND);

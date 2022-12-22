@@ -63,6 +63,7 @@ export class Keyword {
       isAuthorized: false,
       likes: [],
       dislikes: [],
+      _id: '5f9f1b9c0b9b9c0b9b9b9b9b',
     },
   })
   @Prop({ type: IKeyword, default: defaultKeywordValue })
@@ -76,6 +77,7 @@ export class Keyword {
       isAuthorized: false,
       likes: [],
       dislikes: [],
+      _id: '5f9f1b9c0b9b9c0b9b9b9b9c',
     },
   })
   @Prop({ type: IKeyword, default: defaultKeywordValue })
@@ -89,10 +91,16 @@ export class Keyword {
       isAuthorized: false,
       likes: [],
       dislikes: [],
+      _id: '5f9f1b9c0b9b9c0b9b9b9b9d',
     },
   })
   @Prop({ type: IKeyword, default: defaultKeywordValue })
   ar: IKeyword;
+
+  @ApiProperty({
+    example: '5f9f1b9aase9b92342',
+  })
+  _id: ObjectId;
 }
 
 export const KeywordSchema = SchemaFactory.createForClass(Keyword);
