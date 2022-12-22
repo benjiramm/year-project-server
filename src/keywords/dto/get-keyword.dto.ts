@@ -16,4 +16,12 @@ export class RankKeywordDto {
   @IsString({ message: 'Must be a string' })
   @IsNotEmpty({ message: 'Cannot be empty' })
   readonly id: string;
+
+  @ApiProperty({
+    example: '637ebad3b800906da0090115',
+    description: 'Language ID',
+  })
+  @IsString({ message: 'Must be a string' })
+  @IsNotEmpty({ message: 'Cannot be empty' })
+  readonly langId: string;
 }

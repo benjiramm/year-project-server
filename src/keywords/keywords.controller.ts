@@ -2,17 +2,15 @@ import {
   Body,
   Controller,
   Get,
-  Param,
   Post,
   Query,
   Req,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -21,11 +19,10 @@ import {
   NewKeywordDto,
   ResponseKeywordDto,
 } from '@/keywords/dto/new-keyword.dto';
-import {
-  RankKeywordDto,
-  SearchKeywordDto,
-} from '@/keywords/dto/get-keyword.dto';
+import { RankKeywordDto } from '@/keywords/dto/get-keyword.dto';
 import { AdminGuard, JwtAuthGuard } from '@/auth/jwt-auth.guard';
+import { Language } from '@/keywords/schemas/keyword.schema';
+import { KeywordParamGuard } from '@/keywords/keywords.guard';
 
 @ApiTags('Keywords')
 @Controller('keywords')
@@ -40,6 +37,7 @@ export class KeywordsController {
   }
 
   @Get('pending')
+  @ApiQuery({ name: 'lang', enum: Language, required: false })
   @ApiOperation({ summary: 'Get Pending for approvals' })
   @ApiResponse({ status: 200, type: ResponseKeywordDto })
   getPendingKeywords(@Query() query) {
@@ -47,11 +45,14 @@ export class KeywordsController {
     return this.keywordsService.getPendingForApproval(lang);
   }
 
-  @Post('search')
-  @ApiOperation({ summary: 'Get Pending for approvals' })
+  @Get('search')
+  @ApiOperation({ summary: 'Search keyword' })
+  @ApiQuery({ name: 'keyword', required: true })
+  @UseGuards(KeywordParamGuard)
   @ApiResponse({ status: 200, type: ResponseKeywordDto })
-  getKeyword(@Body() searchDto: SearchKeywordDto) {
-    return this.keywordsService.getKeyword(searchDto.keyword);
+  getKeyword(@Query() query) {
+    const { keyword } = query;
+    return this.keywordsService.getKeyword(keyword);
   }
 
   @Post('like')
@@ -60,7 +61,7 @@ export class KeywordsController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   like(@Req() req, @Body() rankDto: RankKeywordDto) {
-    return this.keywordsService.like(rankDto.id, req.user.id);
+    return this.keywordsService.like(rankDto, req.user.id);
   }
 
   @Post('dislike')
@@ -69,15 +70,15 @@ export class KeywordsController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   dislike(@Req() req, @Body() rankDto: RankKeywordDto) {
-    return this.keywordsService.dislike(rankDto.id, req.user.id);
+    return this.keywordsService.dislike(rankDto, req.user.id);
   }
 
-  @Post('authorize-keyword/:id')
+  @Post('authorize-keyword')
   @ApiOperation({ summary: 'Authorize keyword' })
   @ApiResponse({ status: 200, type: ResponseKeywordDto })
   @ApiBearerAuth()
   @UseGuards(AdminGuard)
-  authorizeKeyword(@Param('id') id: string) {
-    return this.keywordsService.authorizeKeyword(id);
+  authorizeKeyword(@Req() req, @Body() rankDto: RankKeywordDto) {
+    return this.keywordsService.authorizeKeyword(rankDto);
   }
 }
