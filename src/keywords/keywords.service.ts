@@ -214,10 +214,14 @@ export class KeywordsService {
         }
 
         if (keyword[lang].likes.includes(userId) && action === Action.LIKE) {
-          await this.model.updateOne({
-            _id: rankDto.id,
-            $pull: { [`${lang}.likes`]: userId },
-          });
+          await this.model.findOneAndUpdate(
+            {
+              _id: rankDto.id,
+            },
+            {
+              $pull: { [`${lang}.likes`]: userId },
+            },
+          );
           return true;
         }
 
@@ -225,10 +229,14 @@ export class KeywordsService {
           keyword[lang].dislikes.includes(userId) &&
           action === Action.DISLIKE
         ) {
-          await this.model.updateOne({
-            _id: rankDto.id,
-            $pull: { [`${lang}.dislikes`]: userId },
-          });
+          await this.model.findOneAndUpdate(
+            {
+              _id: rankDto.id,
+            },
+            {
+              $pull: { [`${lang}.dislikes`]: userId },
+            },
+          );
           return true;
         }
       }
