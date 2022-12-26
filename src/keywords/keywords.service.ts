@@ -35,7 +35,7 @@ export class KeywordsService {
 
     for (let i = 0; i < File.length - 1; i++) {
       const newKeyword = new NewKeywordDto();
-
+      console.log("work");
       newKeyword.he = {
         keyword: File[i].conceptName.hebrew,
         short: File[i].shortDefinition.hebrew,
