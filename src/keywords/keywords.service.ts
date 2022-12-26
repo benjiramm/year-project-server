@@ -5,26 +5,53 @@ import {
   Injectable,
 } from '@nestjs/common';
 import * as _ from 'lodash';
-import {
-  NewKeywordDto,
-  // ResponseKeywordDto,
-} from '@/keywords/dto/new-keyword.dto';
+import { NewKeywordDto } from '@/keywords/dto/new-keyword.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
   defaultKeywordValue,
+  IKeyword,
   Keyword,
   KeywordDocument,
   Language,
 } from '@/keywords/schemas/keyword.schema';
+import File from '@/AllConcepts.json';
 import { Action } from '@/keywords/types';
 import { RankKeywordDto } from '@/keywords/dto/get-keyword.dto';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Injectable()
 export class KeywordsService {
   constructor(
     @InjectModel(Keyword.name) private readonly model: Model<KeywordDocument>,
   ) {}
+
+  async init(): Promise<void> {
+    // he: {
+    //     keyword: 'mada',
+    //     short: 'short',
+    //     long: 'long',
+    // };
+
+    for (let i = 0; i < File.length - 1; i++) {
+      const newKeyword = new NewKeywordDto();
+
+      newKeyword.he = {
+        keyword: File[i].conceptName.hebrew,
+        short: File[i].shortDefinition.hebrew,
+        long: File[i].longDefinition.hebrew,
+        isAuthorized: true,
+        likes: [],
+        dislikes: [],
+      };
+
+      // TODO: add for newKeyword.en
+
+      //   TODO: add for newKeyword.ar
+
+      //   TODO: save await new this.model(newKeyword).save();
+    }
+  }
 
   async addKeyword(keywordDto: NewKeywordDto): Promise<Keyword> {
     // validate language

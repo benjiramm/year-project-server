@@ -29,6 +29,11 @@ import { KeywordParamGuard } from '@/keywords/keywords.guard';
 export class KeywordsController {
   constructor(private keywordsService: KeywordsService) {}
 
+  @Post('init')
+  init() {
+    return this.keywordsService.init();
+  }
+
   @Post('add')
   @ApiOperation({ summary: 'Add new keyword' })
   @ApiResponse({ status: 200, type: Keyword })
