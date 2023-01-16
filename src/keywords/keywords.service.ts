@@ -35,10 +35,10 @@ export class KeywordsService {
 
     for (let i = 0; i < File.length - 1; i++) {
       const newKeyword = new NewKeywordDto();
-
+      console.log("work");
       newKeyword.he = {
         keyword: File[i].conceptName.hebrew,
-        short: File[i].shortDefinition.hebrew,
+        short: File[i].shortDefinition.hebrew || null,
         long: File[i].longDefinition.hebrew,
         isAuthorized: true,
         likes: [],
@@ -46,10 +46,29 @@ export class KeywordsService {
       };
 
       // TODO: add for newKeyword.en
+            newKeyword.en = {
+              keyword: File[i].conceptName.english,
+              short: File[i].shortDefinition.english || null,
+              long: File[i].longDefinition.english,
+              isAuthorized: true,
+              likes: [],
+              dislikes: [],
+            };
 
       //   TODO: add for newKeyword.ar
+      newKeyword.ar = {
+        keyword: File[i].conceptName.arabic,
+        short: File[i].shortDefinition.arabic || null,
+        long: File[i].longDefinition.arabic,
+        isAuthorized: true,
+        likes: [],
+        dislikes: [],
 
+      };
+      await new this.model(newKeyword).save();
       //   TODO: save await new this.model(newKeyword).save();
+
+
     }
   }
 
